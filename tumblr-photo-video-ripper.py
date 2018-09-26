@@ -9,7 +9,6 @@ from threading import Thread
 import re
 import json
 
-
 # Setting timeout
 TIMEOUT = 10
 
@@ -36,6 +35,7 @@ def video_hd_match():
                 return hd_match.group(2).replace('\\', '')
         except:
             return None
+
     return match
 
 
@@ -49,6 +49,7 @@ def video_default_match():
                 return default_match.group(1)
             except:
                 return None
+
     return match
 
 
@@ -107,7 +108,7 @@ class DownloadWorker(Thread):
                                         medium_name])
 
             medium_name += ".mp4"
-            medium_url = 'https://vt.tumblr.com/' + medium_name
+            medium_url = 'https://vtt.tumblr.com/' + medium_name
 
         file_path = os.path.join(target_folder, medium_name)
         if not os.path.isfile(file_path):
@@ -125,8 +126,7 @@ class DownloadWorker(Thread):
                         print("Access Denied when retrieve %s.\n" % medium_url)
                         raise Exception("Access Denied")
                     with open(file_path, 'wb') as fh:
-                        for chunk in resp.iter_content(chunk_size=1024):
-                            fh.write(chunk)
+                        print("视频播放地址===>" + medium_url)
                     break
                 except:
                     # try again
@@ -163,7 +163,7 @@ class CrawlerScheduler(object):
             self.download_media(site)
 
     def download_media(self, site):
-        self.download_photos(site)
+        # self.download_photos(site)
         self.download_videos(site)
 
     def download_videos(self, site):
@@ -196,6 +196,7 @@ class CrawlerScheduler(object):
                 print("Site %s does not exist" % site)
                 break
 
+            print("视频下载的地址===" + media_url)
             try:
                 xml_cleaned = re.sub(u'[^\x20-\x7f]+',
                                      u'', response.content.decode('utf-8'))
@@ -252,9 +253,9 @@ def parse_sites(filename):
         raw_sites = f.read().rstrip().lstrip()
 
     raw_sites = raw_sites.replace("\t", ",") \
-                         .replace("\r", ",") \
-                         .replace("\n", ",") \
-                         .replace(" ", ",")
+        .replace("\r", ",") \
+        .replace("\n", ",") \
+        .replace(" ", ",")
     raw_sites = raw_sites.split(",")
 
     sites = list()
